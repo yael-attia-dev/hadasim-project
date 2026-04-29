@@ -6,13 +6,18 @@ import AuthForm from './components/AuthForm.jsx'; // הקוד המקורי של�
 function App() {
     const [page, setPage] = useState('home'); // ניהול פשוט של דפים
     const isLoggedIn = localStorage.getItem('teacherId');
-
+    const [authUpdate, setAuthUpdate] = useState(false);
     // פונקציה להצגת התוכן המרכזי לפי הבחירה
+    const onLoginSuccess = () => {
+        setPage('home');
+        setAuthUpdate(!authUpdate); // גורם לריענון של כל ה-App והסרגל
+    };
     const renderContent = () => {
-        if (page === 'auth') {
-            return <AuthForm onLoginSuccess={() => setPage('home')} />;
-        }
 
+        if (page === 'auth') {
+            // במקום ללכת ישירות לבית, קוראים לפונקציה שמרעננת את המערכת
+            return <AuthForm onLoginSuccess={onLoginSuccess} />;
+        }
 
         if (page === 'home') {
             return (

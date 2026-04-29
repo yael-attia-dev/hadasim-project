@@ -15,7 +15,6 @@ function AuthForm({ onLoginSuccess }) {
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
-
     const handleClickShowPassword = () => setShowPassword(!showPassword);
 
     const handleSubmit = async () => {
@@ -24,15 +23,12 @@ function AuthForm({ onLoginSuccess }) {
 
         try {
             if (isLogin) {
-                // התחברות
                 const response = await axios.post('http://localhost:8080/api/teachers/login', { id, password });
-
-                // שומרים את המזהה של המורה כדי שהסרגל ידע שהיא מחוברת
+                const fullName = `${response.data.firstName} ${response.data.lastName}`;
+                localStorage.setItem('teacherName', fullName);
                 localStorage.setItem('teacherId', id);
-
-                alert("ברוכה הבאה!");
-                onLoginSuccess(); // מודיע ל-App לעבור לדף הבית
-            } else {
+                onLoginSuccess();
+            }else {
                 // הרשמה
                 await axios.post('http://localhost:8080/api/teachers', {
                     id: id,
@@ -72,16 +68,23 @@ function AuthForm({ onLoginSuccess }) {
                         <TextField fullWidth label="מספר תעודת זהות" variant="outlined" value={id} onChange={(e) => setId(e.target.value)} />
 
                         <TextField
-                            fullWidth label="סיסמה" type={showPassword ? 'text' : 'password'} variant="outlined"
-                            value={password} onChange={(e) => setPassword(e.target.value)}
-                            InputProps={{
-                                endAdornment: (
-                                    <InputAdornment position="end">
-                                        <IconButton onClick={handleClickShowPassword} edge="end">
-                                            {showPassword ? <VisibilityOff /> : <Visibility />}
-                                        </IconButton>
-                                    </InputAdornment>
-                                ),
+                            fullWidth
+                            label="סיסמה"
+                            type={showPassword ? 'text' : 'password'}
+                            variant="outlined"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            // בגרסאות החדשות משתמשים ב-slotProps במקום ב-InputProps
+                            slotProps={{
+                                input: {
+                                    endAdornment: (
+                                        <InputAdornment position="end">
+                                            <IconButton onClick={handleClickShowPassword} edge="end">
+                                                {showPassword ? <VisibilityOff /> : <Visibility />}
+                                            </IconButton>
+                                        </InputAdornment>
+                                    ),
+                                },
                             }}
                         />
                     </Stack>
