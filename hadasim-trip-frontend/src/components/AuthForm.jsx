@@ -27,6 +27,7 @@ function AuthForm({ onLoginSuccess }) {
                 const fullName = `${response.data.firstName} ${response.data.lastName}`;
                 localStorage.setItem('teacherName', fullName);
                 localStorage.setItem('teacherId', id);
+                localStorage.setItem('teacherClass', response.data.classroom);
                 onLoginSuccess();
             }else {
                 // הרשמה

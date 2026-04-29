@@ -1,63 +1,86 @@
 import { useState, useEffect } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
-import { Box } from '@mui/material';
+import { MapContainer, TileLayer, Marker, Tooltip } from 'react-leaflet';
+import { Box, Typography } from '@mui/material';
+import axios from 'axios';
 import 'leaflet/dist/leaflet.css';
 
-// פונקציית עזר להמרת הפורמט של ה-JSON שלך למספר עשרוני
-const convertDMSToDecimal = (dms) => {
-    return parseFloat(dms.Degrees) + parseFloat(dms.Minutes) / 60 + parseFloat(dms.Seconds) / 3600;
-};
-
-// רכיב פנימי שגורם למפה "לקפוץ" למיקום החדש כשהוא משתנה
-function RecenterMap({ coords }) {
-    const map = useMap();
-    useEffect(() => {
-        map.setView(coords, map.getZoom());
-    }, [coords]);
-    return null;
-}
-
 const MapComponent = () => {
-    const [position, setPosition] = useState([32.0853, 34.7818]); // מיקום התחלתי (ת"א)
+    const [studentsLocations, setStudentsLocations] = useState([]);
 
-    // סימולציה של נתוני ה-JSON (במציאות זה יגיע מקובץ או מ-API)
-    const mockJsonData = {
-        "ID": 123456789,
-        "Coordinates": {
-            "Longitude": {"Degrees": "34", "Minutes": "46", "Seconds": "44"},
-            "Latitude": {"Degrees": "32", "Minutes": "5", "Seconds": "23"}
+    const updateMapData = async () => {
+        try {
+            // 1. משיכת נתונים עם חותמת זמן כדי למנוע Cache של הדפדפן
+            const timestamp = new Date().getTime();
+
+            const [studentsResp, locationsResp] = await Promise.all([
+                axios.get(`http://localhost:8080/api/students?t=${timestamp}`),
+                axios.get(`http://localhost:8080/api/latest?t=${timestamp}`)
+            ]);
+
+            const studentsFromDB = studentsResp.data;
+            const latestLocationsFromDB = locationsResp.data;
+
+            // 2. חיבור הנתונים ובדיקה שהערכים הם אכן מספרים
+            const updatedData = studentsFromDB.map(student => {
+                const loc = latestLocationsFromDB.find(l => l.studentId === student.id);
+
+                if (loc && loc.latitude && loc.longitude) {
+                    return {
+                        ...student,
+                        lat: parseFloat(loc.latitude),
+                        lng: parseFloat(loc.longitude)
+                    };
+                }
+                return null;
+            }).filter(item => item !== null);
+
+            // 3. הדפסה לטרמינל הדפדפן כדי שתוכלי לעקוב שהנתונים באמת משתנים
+            console.log("Map Update:", updatedData);
+            setStudentsLocations(updatedData);
+        } catch (err) {
+            console.error("שגיאה בטעינת הנתונים למפה", err);
         }
     };
 
     useEffect(() => {
-        // כאן אנחנו "משחקים אותה" כאילו הנתונים מתעדכנים
-        const interval = setInterval(() => {
-            const lat = convertDMSToDecimal(mockJsonData.Coordinates.Latitude);
-            const lng = convertDMSToDecimal(mockJsonData.Coordinates.Longitude);
-
-            // אנחנו מוסיפים רעש קטן כדי לראות תנועה על המפה (רק לסימולציה)
-            const randomNoise = (Math.random() - 0.5) * 0.01;
-            setPosition([lat + randomNoise, lng + randomNoise]);
-
-            console.log("מיקום התעדכן:", lat, lng);
-        }, 5000); // מתעדכן כל 5 שניות
-
+        updateMapData();
+        // עדכון כל 10 שניות (מספיק כדי לראות תנועה בלי להעמיס)
+        const interval = setInterval(updateMapData, 10000);
         return () => clearInterval(interval);
     }, []);
 
     return (
-        <Box sx={{ height: '500px', width: '100%', borderRadius: '15px', overflow: 'hidden' }}>
-            <MapContainer center={position} zoom={13} style={{ height: '100%', width: '100%' }}>
+        <Box sx={{ height: '600px', width: '100%', borderRadius: '15px', overflow: 'hidden', boxShadow: 3 }}>
+            <MapContainer
+                center={[31.7683, 35.2137]} // מרכז ירושלים
+                zoom={12}
+                style={{ height: '100%', width: '100%' }}
+            >
                 <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
-                <Marker position={position}>
-                    <Popup>
-                        תלמידה מספר: {mockJsonData.ID} <br />
-                        מעדכן מיקום בזמן אמת...
-                    </Popup>
-                </Marker>
-
-                <RecenterMap coords={position} />
+                {studentsLocations.map((student) => (
+                    // השימוש במיקום כחלק מה-key מבטיח שהסיכה תזוז פיזית על המפה
+                    <Marker
+                        key={`${student.id}-${student.lat}-${student.lng}`}
+                        position={[student.lat, student.lng]}
+                    >
+                        <Tooltip
+                            permanent
+                            direction="top"
+                            offset={[0, -32]}
+                            opacity={0.9}
+                        >
+                            <Box sx={{ textAlign: 'center', direction: 'rtl' }}>
+                                <Typography variant="body2" sx={{ fontWeight: 'bold', fontSize: '0.8rem' }}>
+                                    {student.firstName} {student.lastName}
+                                </Typography>
+                                <Typography variant="caption" display="block">
+                                    כיתה: {student.classroom}
+                                </Typography>
+                            </Box>
+                        </Tooltip>
+                    </Marker>
+                ))}
             </MapContainer>
         </Box>
     );

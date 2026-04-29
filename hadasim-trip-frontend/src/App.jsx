@@ -4,12 +4,16 @@ import Sidebar from './components/Sidebar.jsx'; // ניצור אותו מיד
 import AuthForm from './components/AuthForm.jsx'; // הקוד המקורי שלך יועבר לכאן
 import AddStudent from "./components/AddStudent.jsx";
 import MapComponent from "./components/MapComponent.jsx";
+import StudentList from "./components/StudentList.jsx";
 
 function App() {
+
     const [page, setPage] = useState('home'); // ניהול פשוט של דפים
     const isLoggedIn = localStorage.getItem('teacherId');
     const [authUpdate, setAuthUpdate] = useState(false);
     // פונקציה להצגת התוכן המרכזי לפי הבחירה
+
+
     const onLoginSuccess = () => {
         setPage('home');
         setAuthUpdate(!authUpdate); // גורם לריענון של כל ה-App והסרגל
@@ -22,10 +26,19 @@ function App() {
             return <AuthForm onLoginSuccess={onLoginSuccess}/>;
         }
 
+        if (page === 'student-list') {
+            // שליפה מהזיכרון של הדפדפן
+            const savedName = localStorage.getItem('teacherName');
+            const savedClass = localStorage.getItem('teacherClass');
+
+            // שליחה לקומפוננטה של הרשימה
+            return <StudentList teacherName={savedName} classroom={savedClass} />;
+        }
 
         if (page === 'map-component') {
             return <MapComponent />;
         }
+
 
 
         if (page === 'add-student') {
@@ -33,15 +46,26 @@ function App() {
         }
 
         if (page === 'home') {
+
             return (
-                <Container maxWidth="md">
+                <Container  maxWidth="md">
 
-                    <Typography variant="h4" align="center" sx={{mb: 4, fontWeight: 'bold'}}>
-                        מערכת ניהול טיולים
-                    </Typography>
+                    <Box sx={{ backgroundColor: 'white', textAlign: 'center', mb: 3 }}>
+                        {/* במקום הכיתוב "מערכת ניהול תלמידים", נשים את הלוגו */}
+                        <img
+                            src="/logo.png"
+                            alt="לוגו מערכת ניהול"
+                            style={{
+                                maxWidth: '100%',
+                                height: 'auto',
+                                maxHeight: '250px', // תשלטי פה על הגובה של הלוגו
+                                objectFit: 'contain'
+                            }}
+                        />
+                    </Box>
 
 
-                    <Stack direction="row" spacing={4} sx={{ justifyContent: "center" }}>
+                    <Stack direction="row" spacing={4} sx={{  backgroundColor:'white' ,justifyContent: "center" }}>
                         {/* אופציות שלא קשורות למורה ספציפית - במרכז המסך */}
 
 
@@ -52,7 +76,7 @@ function App() {
                                 sx={{ mt: 2 }}
                                 onClick={() => setPage('add-student')}
                             >
-                                הצג מפה
+                                רשום תלמידה
                             </Button>
                         </Paper>
 
@@ -65,7 +89,7 @@ function App() {
                                 sx={{ mt: 2 }}
                                 onClick={() => setPage('map-component')}
                             >
-                                עבור לרישום
+                                הצג מפה
                             </Button>
                         </Paper>
 

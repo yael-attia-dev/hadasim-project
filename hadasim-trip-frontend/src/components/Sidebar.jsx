@@ -1,5 +1,6 @@
 import { Box, List, ListItem, ListItemText, Divider, Typography, Button } from '@mui/material';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import './Sidebar.css';
 
 const Sidebar = ({ onNavigate }) => {
     const teacherId = localStorage.getItem('teacherId');
@@ -21,7 +22,7 @@ const Sidebar = ({ onNavigate }) => {
     };
 
     return (
-        <Box sx={{ width: 250, height: '100vh', bgcolor: '#1976d2', color: 'white', position: 'fixed', right: 0, top: 0, pt: 4, display: 'flex', flexDirection: 'column' }}>
+        <Box sx={{ width: 250, height: '100vh', bgcolor: '#3b8d39', color: 'white', position: 'fixed', right: 0, top: 0, pt: 4, display: 'flex', flexDirection: 'column' , borderRadius: '20px 20px 20px 20px'}}>
             <Box sx={{ textAlign: 'center', mb: 4 }}>
                 <AccountCircleIcon sx={{ fontSize: 60 }} />
 
@@ -31,7 +32,7 @@ const Sidebar = ({ onNavigate }) => {
                 </Typography>
 
                 {teacherId ? (
-                    <Button color="inherit" size="small" onClick={handleLogout} sx={{ mt: 1, textDecoration: 'underline', fontSize: '0.7rem' }}>
+                    <Button color="inherit" size="small" onClick={handleLogout} sx={{ mt: 1, textDecoration: 'underline', fontSize: '0.7rem'  }}>
                         התנתקות
                     </Button>
                 ) : (
@@ -42,6 +43,7 @@ const Sidebar = ({ onNavigate }) => {
             </Box>
 
             <Divider sx={{ bgcolor: 'rgba(255,255,255,0.2)' }} />
+
             <List>
                 <ListItem button onClick={() => onNavigate('home')}>
                     <ListItemText primary="מסך הבית" sx={{ textAlign: 'right' }} />
@@ -50,9 +52,15 @@ const Sidebar = ({ onNavigate }) => {
                 <Divider sx={{ bgcolor: 'rgba(255,255,255,0.1)', my: 1 }} />
 
 
-                <ListItem button onClick={() => handleProtected('my-students')}>
-                    <ListItemText primary="רשימת התלמידות שלי" sx={{ textAlign: 'right' }} />
+
+                <ListItem button onClick={() => {handleProtected('my-students'); // בודק הרשאות
+                        onNavigate('student-list');    // מעביר דף
+                    }}
+                    sx={{'&:hover': { backgroundColor: 'rgba(255, 255, 255, 0.1)' }, cursor: 'pointer'}}>
+                    <ListItemText primary="רשימת התלמידות שלי" sx={{ textAlign: 'right', color: 'white' }}
+                    />
                 </ListItem>
+
 
                 <Divider sx={{ bgcolor: 'rgba(255,255,255,0.1)', my: 1 }} />
 
