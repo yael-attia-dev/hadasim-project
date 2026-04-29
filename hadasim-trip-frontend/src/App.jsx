@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { Box, Typography, Button, Stack, Paper, Container } from '@mui/material';
 import Sidebar from './components/Sidebar.jsx'; // ניצור אותו מיד
 import AuthForm from './components/AuthForm.jsx'; // הקוד המקורי שלך יועבר לכאן
+import AddStudent from "./components/AddStudent.jsx";
+import MapComponent from "./components/MapComponent.jsx";
 
 function App() {
     const [page, setPage] = useState('home'); // ניהול פשוט של דפים
@@ -12,31 +14,62 @@ function App() {
         setPage('home');
         setAuthUpdate(!authUpdate); // גורם לריענון של כל ה-App והסרגל
     };
+
     const renderContent = () => {
 
         if (page === 'auth') {
             // במקום ללכת ישירות לבית, קוראים לפונקציה שמרעננת את המערכת
-            return <AuthForm onLoginSuccess={onLoginSuccess} />;
+            return <AuthForm onLoginSuccess={onLoginSuccess}/>;
+        }
+
+
+        if (page === 'map-component') {
+            return <MapComponent />;
+        }
+
+
+        if (page === 'add-student') {
+            return <AddStudent />;
         }
 
         if (page === 'home') {
             return (
                 <Container maxWidth="md">
-                    <Typography variant="h4" align="center" sx={{ mb: 4, fontWeight: 'bold' }}>
+
+                    <Typography variant="h4" align="center" sx={{mb: 4, fontWeight: 'bold'}}>
                         מערכת ניהול טיולים
                     </Typography>
 
-                    <Stack direction="row" spacing={4} justifyContent="center">
+
+                    <Stack direction="row" spacing={4} sx={{ justifyContent: "center" }}>
                         {/* אופציות שלא קשורות למורה ספציפית - במרכז המסך */}
-                        <Paper elevation={3} sx={{ p: 4, textAlign: 'center', cursor: 'pointer', flex: 1 }}>
+
+
+                        <Paper elevation={3} sx={{p: 4, textAlign: 'center', cursor: 'pointer', flex: 1}}>
                             <Typography variant="h6">הוספת תלמידה לטיול</Typography>
-                            <Button variant="outlined" sx={{ mt: 2 }}>עבור לרישום</Button>
+                            <Button
+                                variant="outlined"
+                                sx={{ mt: 2 }}
+                                onClick={() => setPage('add-student')}
+                            >
+                                הצג מפה
+                            </Button>
                         </Paper>
 
-                        <Paper elevation={3} sx={{ p: 4, textAlign: 'center', cursor: 'pointer', flex: 1 }}>
+
+
+                        <Paper elevation={3} sx={{p: 4, textAlign: 'center', cursor: 'pointer', flex: 1}}>
                             <Typography variant="h6">הצגת מפת המיקומים</Typography>
-                            <Button variant="outlined" sx={{ mt: 2 }}>פתח מפה</Button>
+                            <Button
+                                variant="outlined"
+                                sx={{ mt: 2 }}
+                                onClick={() => setPage('map-component')}
+                            >
+                                עבור לרישום
+                            </Button>
                         </Paper>
+
+
                     </Stack>
                 </Container>
             );
