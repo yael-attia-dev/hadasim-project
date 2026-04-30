@@ -44,6 +44,7 @@ function AuthForm({ onLoginSuccess }) {
         } catch (error) {
 
             const serverMessage = error.response?.data?.message || error.response?.data;
+            console.log("Extracted Message:", serverMessage);
             setError(typeof serverMessage === 'string' ? serverMessage : "שגיאה ברישום. ודאי שכל השדות מלאים.");        }
 
 
@@ -53,26 +54,35 @@ function AuthForm({ onLoginSuccess }) {
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', p: 2 }}>
             <Container maxWidth="xs">
                 <Paper elevation={4} sx={{ p: 4, borderRadius: 3 }}>
-                    <Typography variant="h5" align="center" gutterBottom sx={{ fontWeight: 'bold', color: '#1976d2' }}>
+
+                    <Typography variant="h5" align="center" gutterBottom sx={{ fontWeight: 'bold', color: '#65d437' }}>
                         {isLogin ? "כניסת מורות" : "רישום מורה חדשה"}
                     </Typography>
 
-                    {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
-                    {success && <Alert severity="success" sx={{ mb: 2 }}>{success}</Alert>}
+                    {error && <Alert severity="error" sx={{mb: 2, borderRadius: '12px', borderWidth: '2px', fontWeight: 'bold', direction: 'rtl' }}>{error}</Alert>}
+                    {success && <Alert severity="success" sx={{mb: 2, borderRadius: '12px', borderWidth: '2px', fontWeight: 'bold', direction: 'rtl' }}>{success}</Alert>}
 
                     <Stack spacing={1}>
                         {!isLogin && (
                             <>
-                                <TextField fullWidth label="שם פרטי" variant="outlined" size="small" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
-                                <TextField fullWidth label="שם משפחה" variant="outlined" size="small" value={lastName} onChange={(e) => setLastName(e.target.value)} />
-                                <TextField fullWidth label="כיתה (למשל: א'1)" variant="outlined" size="small" value={classroom} onChange={(e) => setClassroom(e.target.value)} />
+                                <TextField fullWidth label="שם פרטי"  sx={{ '& label.Mui-focused': {color: '#65d437',}, '& .MuiOutlinedInput-root': {'&.Mui-focused fieldset': {borderColor: '#65d437',},},}}
+                                           variant="outlined" size="small" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
+
+                                <TextField fullWidth label="שם משפחה" sx={{ '& label.Mui-focused': {color: '#65d437',}, '& .MuiOutlinedInput-root': {'&.Mui-focused fieldset': {borderColor: '#65d437',},},}}
+                                           variant="outlined" size="small" value={lastName} onChange={(e) => setLastName(e.target.value)} />
+
+                                <TextField fullWidth label="כיתה (למשל: א1)"  sx={{ '& label.Mui-focused': {color: '#65d437',}, '& .MuiOutlinedInput-root': {'&.Mui-focused fieldset': {borderColor: '#65d437',},},}}
+                                           variant="outlined" size="small" value={classroom} onChange={(e) => setClassroom(e.target.value)} />
                             </>
                         )}
 
-                        <TextField fullWidth label="מספר תעודת זהות" variant="outlined" value={id} onChange={(e) => setId(e.target.value)} />
+                        <TextField fullWidth label="מספר תעודת זהות"   sx={{ '& label.Mui-focused': {color: '#65d437',}, '& .MuiOutlinedInput-root': {'&.Mui-focused fieldset': {borderColor: '#65d437',},},}}
+                                   variant="outlined" value={id} onChange={(e) => setId(e.target.value)} />
 
                         <TextField
+
                             fullWidth
+                            sx={{ '& label.Mui-focused': {color: '#65d437',}, '& .MuiOutlinedInput-root': {'&.Mui-focused fieldset': {borderColor: '#65d437',},},}}
                             label="סיסמה"
                             type={showPassword ? 'text' : 'password'}
                             variant="outlined"
@@ -93,11 +103,11 @@ function AuthForm({ onLoginSuccess }) {
                         />
                     </Stack>
 
-                    <Button fullWidth variant="contained" size="large" onClick={handleSubmit} sx={{ mt: 3, py: 1.5, fontWeight: 'bold' }}>
+                    <Button fullWidth variant="contained" size="large" onClick={handleSubmit} sx={{ mt: 3, py: 1.5, backgroundColor: '#65d437', fontWeight: 'bold' }}>
                         {isLogin ? "התחברות" : "סיום הרשמה"}
                     </Button>
 
-                    <Button fullWidth variant="text" sx={{ mt: 2 }} onClick={() => { setIsLogin(!isLogin); setError(''); }}>
+                    <Button fullWidth variant="text" sx={{ mt: 2 ,color:'#65d437'}} onClick={() => { setIsLogin(!isLogin); setError(''); }}>
                         {isLogin ? "עוד לא רשומה? לחצי כאן להרשמה" : "כבר רשומה? חזרי להתחברות"}
                     </Button>
                 </Paper>

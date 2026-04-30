@@ -5,11 +5,13 @@ import AuthForm from './components/AuthForm.jsx'; // הקוד המקורי של�
 import AddStudent from "./components/AddStudent.jsx";
 import MapComponent from "./components/MapComponent.jsx";
 import StudentList from "./components/StudentList.jsx";
+import DistanceAlerts from "./components/DistanceAlerts.jsx";
 
 function App() {
 
     const [page, setPage] = useState('home'); // ניהול פשוט של דפים
     const isLoggedIn = localStorage.getItem('teacherId');
+    const [students, setStudents] = useState([]);
     const [authUpdate, setAuthUpdate] = useState(false);
     // פונקציה להצגת התוכן המרכזי לפי הבחירה
 
@@ -20,6 +22,10 @@ function App() {
     };
 
     const renderContent = () => {
+
+        if (['student-list', 'distanceAlerts'].includes(page) && !isLoggedIn) {
+            return <AuthForm onLoginSuccess={onLoginSuccess}/>;
+        }
 
         if (page === 'auth') {
             // במקום ללכת ישירות לבית, קוראים לפונקציה שמרעננת את המערכת
@@ -33,6 +39,18 @@ function App() {
 
             // שליחה לקומפוננטה של הרשימה
             return <StudentList teacherName={savedName} classroom={savedClass} />;
+        }
+        if (page === 'dist-alerts') {
+            // שליפה מהזיכרון של הדפדפן
+            const savedName = localStorage.getItem('teacherName');
+            const savedClass = localStorage.getItem('teacherClass');
+
+            // שליחה לקומפוננטה של הרשימה
+            return <DistanceAlerts
+                teacherName={savedName}
+                classroom={savedClass}
+                students={students}
+            />;
         }
 
         if (page === 'map-component') {
@@ -59,7 +77,8 @@ function App() {
                                 maxWidth: '100%',
                                 height: 'auto',
                                 maxHeight: '250px', // תשלטי פה על הגובה של הלוגו
-                                objectFit: 'contain'
+                                objectFit: 'contain',
+                                padding: 0
                             }}
                         />
                     </Box>
@@ -69,13 +88,12 @@ function App() {
                         {/* אופציות שלא קשורות למורה ספציפית - במרכז המסך */}
 
 
-                        <Paper elevation={3} sx={{p: 4, textAlign: 'center', cursor: 'pointer', flex: 1}}>
+                        <Paper elevation={3} sx={{p: 4,borderColor: '#65d437', borderRadius: '20',  textAlign: 'center', cursor: 'pointer', flex: 1}}>
                             <Typography variant="h6">הוספת תלמידה לטיול</Typography>
                             <Button
                                 variant="outlined"
-                                sx={{ mt: 2 }}
-                                onClick={() => setPage('add-student')}
-                            >
+                                sx={{  backgroundColor:'#65d437',mt: 2 , color:'white'}}
+                                onClick={() => setPage('add-student')}>
                                 רשום תלמידה
                             </Button>
                         </Paper>
@@ -86,9 +104,8 @@ function App() {
                             <Typography variant="h6">הצגת מפת המיקומים</Typography>
                             <Button
                                 variant="outlined"
-                                sx={{ mt: 2 }}
-                                onClick={() => setPage('map-component')}
-                            >
+                                sx={{ backgroundColor: '#65d437', mt: 2, color:'white' }}
+                                onClick={() => setPage('map-component')}>
                                 הצג מפה
                             </Button>
                         </Paper>

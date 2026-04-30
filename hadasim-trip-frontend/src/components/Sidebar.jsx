@@ -64,9 +64,15 @@ const Sidebar = ({ onNavigate }) => {
 
                 <Divider sx={{ bgcolor: 'rgba(255,255,255,0.1)', my: 1 }} />
 
-                <ListItem button onClick={() => handleProtected('search-map')}>
-                    <ListItemText primary="חיפוש תלמידה במפה" sx={{ textAlign: 'right' }} />
+                <ListItem button onClick={() => {handleProtected('dist-alerts'); // בודק הרשאות
+                    onNavigate('dist-alerts');    // מעביר דף
+                }}
+                          sx={{'&:hover': { backgroundColor: 'rgba(255, 255, 255, 0.1)' }, cursor: 'pointer'}}>
+                    <ListItemText primary="אזהרות מרחק" sx={{ textAlign: 'right', color: 'white' }}
+                    />
                 </ListItem>
+
+
             </List>
         </Box>
     );

@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
+import AuthForm from "./AuthForm.jsx";
 
 const StudentList = ({ teacherName, classroom }) => {
     const [students, setStudents] = useState([]);
 
     useEffect(() => {
+
         const fetchStudents = async () => {
             if (!classroom) return; // הגנה: אל תשלח בקשה אם הכיתה עדיין ריקה
 
@@ -27,7 +29,7 @@ const StudentList = ({ teacherName, classroom }) => {
 
     return (
         <Box sx={{ p: 4, direction: 'rtl' }}>
-            <Typography variant="h3" gutterBottom sx={{padding: '20px',  fontWeight: 'bold' ,backgroundColor:'#3b8d39', borderRadius: '20px 20px 20px 20px', color: 'white' , fontSize:'20' }}>
+            <Typography variant="h3" gutterBottom sx={{padding: '30px',  fontWeight: 'bold' ,backgroundColor:'#65d437', borderRadius: '20px 20px 20px 20px', color: 'white' , fontSize:'20' }}>
                 כיתה {classroom} של המורה {teacherName}
             </Typography>
 
