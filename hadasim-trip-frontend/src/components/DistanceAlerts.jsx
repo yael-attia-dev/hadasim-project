@@ -1,10 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Alert } from '@mui/material';
+import  {useState, useEffect} from 'react';
+import {
+    Box,
+    Typography,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    Paper,
+    Alert
+} from '@mui/material';
 import axios from 'axios';
 
-const TEACHER_LOCATION = { lat: 31.7683, lng: 35.2137 };
+const TEACHER_LOCATION = {lat: 31.7683, lng: 35.2137};
 
-const DistanceAlerts = ({ classroom }) => {
+const DistanceAlerts = ({classroom}) => {
     const [combinedData, setCombinedData] = useState([]);
 
     const getDistance = (lat1, lon1, lat2, lon2) => {
@@ -21,7 +32,6 @@ const DistanceAlerts = ({ classroom }) => {
     const fetchData = async () => {
         try {
             const timestamp = new Date().getTime();
-            // משיכה של התלמידות והמיקומים בנפרד כמו במפה
             const [studentsResp, locationsResp] = await Promise.all([
                 axios.get(`http://localhost:8080/api/students?t=${timestamp}`),
                 axios.get(`http://localhost:8080/api/latest?t=${timestamp}`)
@@ -55,20 +65,28 @@ const DistanceAlerts = ({ classroom }) => {
     }, [classroom]);
 
     return (
-        <Box sx={{ p: 4, direction: 'rtl', width: '100%' }}>
-            <Typography variant="h4" gutterBottom sx={{padding: '30px',  fontWeight: 'bold' , borderRadius: '20px 20px 20px 20px', color: '#65d437' , fontSize:'20' }}>
+        <Box sx={{p: 4, direction: 'rtl', width: '100%'}}>
+            <Typography variant="h4" gutterBottom sx={{
+                padding: '30px',
+                fontWeight: 'bold',
+                borderRadius: '20px 20px 20px 20px',
+                color: '#65d437',
+                fontSize: '20'
+            }}>
                 מעקב מרחקי תלמידות - כיתה {classroom}
             </Typography>
 
-            <TableContainer component={Paper} elevation={4} sx={{ borderRadius: '15px' }}>
+            <TableContainer component={Paper} elevation={4} sx={{borderRadius: '15px'}}>
                 <Table>
-                    <TableHead sx={{ backgroundColor: '#f8f9fa' }}>
+
+                    <TableHead sx={{backgroundColor: '#f8f9fa'}}>
                         <TableRow>
-                            <TableCell align="right" sx={{ fontWeight: 'bold' }}>שם התלמידה</TableCell>
-                            <TableCell align="right" sx={{ fontWeight: 'bold' }}>מרחק מהמורה</TableCell>
-                            <TableCell align="right" sx={{ fontWeight: 'bold' }}>סטטוס בטיחות</TableCell>
+                            <TableCell align="right" sx={{fontWeight: 'bold'}}>שם התלמידה</TableCell>
+                            <TableCell align="right" sx={{fontWeight: 'bold'}}>מרחק מהמורה</TableCell>
+                            <TableCell align="right" sx={{fontWeight: 'bold'}}>סטטוס בטיחות</TableCell>
                         </TableRow>
                     </TableHead>
+
                     <TableBody>
                         {combinedData.map((student) => {
                             const hasLocation = student.lat !== null && student.lng !== null;
@@ -79,17 +97,22 @@ const DistanceAlerts = ({ classroom }) => {
                             const isFar = hasLocation && distance > 3;
 
                             return (
-                                <TableRow key={student.id} sx={{ backgroundColor: isFar ? '#fff5f5' : 'inherit' }}>
+                                <TableRow key={student.id} sx={{backgroundColor: isFar ? '#fff5f5' : 'inherit'}}>
                                     <TableCell align="right">{student.firstName} {student.lastName}</TableCell>
-                                    <TableCell align="right" sx={{ color: isFar ? '#d32f2f' : 'inherit', fontWeight: isFar ? 'bold' : 'normal' }}>
+                                    <TableCell align="right" sx={{
+                                        color: isFar ? '#d32f2f' : 'inherit',
+                                        fontWeight: isFar ? 'bold' : 'normal'
+                                    }}>
                                         {hasLocation ? `${distance.toFixed(2)} ק"מ` : "אין נתוני מיקום"}
                                     </TableCell>
                                     <TableCell align="right">
                                         {hasLocation ? (
                                             isFar ? (
-                                                <Alert icon={false} severity="error" sx={{ py: 0, px: 1, display: 'inline-flex' }}>מרוחקת מדי</Alert>
+                                                <Alert icon={false} severity="error"
+                                                       sx={{py: 0, px: 1, display: 'inline-flex'}}>מרוחקת מדי</Alert>
                                             ) : (
-                                                <Alert icon={false} severity="success" sx={{ py: 0, px: 1, display: 'inline-flex' }}>תקין</Alert>
+                                                <Alert icon={false} severity="success"
+                                                       sx={{py: 0, px: 1, display: 'inline-flex'}}>תקין</Alert>
                                             )
                                         ) : (
                                             <Typography variant="caption">ממתין לעדכון...</Typography>

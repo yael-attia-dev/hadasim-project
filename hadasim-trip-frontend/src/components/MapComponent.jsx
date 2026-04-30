@@ -9,7 +9,6 @@ const MapComponent = () => {
 
     const updateMapData = async () => {
         try {
-            // 1. משיכת נתונים עם חותמת זמן כדי למנוע Cache של הדפדפן
             const timestamp = new Date().getTime();
 
             const [studentsResp, locationsResp] = await Promise.all([
@@ -20,7 +19,6 @@ const MapComponent = () => {
             const studentsFromDB = studentsResp.data;
             const latestLocationsFromDB = locationsResp.data;
 
-            // 2. חיבור הנתונים ובדיקה שהערכים הם אכן מספרים
             const updatedData = studentsFromDB.map(student => {
                 const loc = latestLocationsFromDB.find(l => l.studentId === student.id);
 
@@ -34,7 +32,6 @@ const MapComponent = () => {
                 return null;
             }).filter(item => item !== null);
 
-            // 3. הדפסה לטרמינל הדפדפן כדי שתוכלי לעקוב שהנתונים באמת משתנים
             console.log("Map Update:", updatedData);
             setStudentsLocations(updatedData);
         } catch (err) {
@@ -43,8 +40,7 @@ const MapComponent = () => {
     };
 
     useEffect(() => {
-        updateMapData();
-        // עדכון כל 10 שניות (מספיק כדי לראות תנועה בלי להעמיס)
+      void updateMapData();
         const interval = setInterval(updateMapData, 10000);
         return () => clearInterval(interval);
     }, []);
@@ -59,8 +55,8 @@ const MapComponent = () => {
                 <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
                 {studentsLocations.map((student) => (
-                    // השימוש במיקום כחלק מה-key מבטיח שהסיכה תזוז פיזית על המפה
                     <Marker
+
                         key={`${student.id}-${student.lat}-${student.lng}`}
                         position={[student.lat, student.lng]}
                     >
