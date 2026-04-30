@@ -41,9 +41,12 @@ function AuthForm({ onLoginSuccess }) {
                 setSuccess("המורה נרשמה בהצלחה! עכשיו אפשר להתחבר.");
                 setIsLogin(true);
             }
-        } catch (err) {
-            setError(isLogin ? "פרטים שגויים." : "שגיאה ברישום. ודאי שכל השדות מלאים.");
-        }
+        } catch (error) {
+
+            const serverMessage = error.response?.data?.message || error.response?.data;
+            setError(typeof serverMessage === 'string' ? serverMessage : "שגיאה ברישום. ודאי שכל השדות מלאים.");        }
+
+
     };
 
     return (

@@ -29,10 +29,14 @@ function AddStudent() {
 
             // איפוס הטופס לאחר הצלחה
             setStudentData({ id: '', firstName: '', lastName: '', classroom: '' });
-        } catch (err) {
-            console.error(err);
-            setMessage({ text: 'שגיאה בהוספת התלמידה. ודאי שהסרוויס ב-Java רץ.', type: 'error' });
-        }
+        } catch (error) {
+            const serverMessage = error.response?.data?.message || error.response?.data;
+
+            // אם השרת החזיר הודעה על 9 ספרות או ת"ז קיימת - זה יופיע כאן
+            setMessage({
+                text: typeof serverMessage === 'string' ? serverMessage : "שגיאה ברישום התלמידה",
+                type: 'error'
+            });        }
     };
 
     return (

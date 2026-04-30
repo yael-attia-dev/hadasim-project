@@ -108,7 +108,7 @@ function App() {
             <Sidebar onNavigate={setPage} />
 
             {/* תוכן מרכזי - משתנה */}
-            <Box component="main" sx={{ flexGrow: 1, p: 3, display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: '250px' }}>
+            <Box component="main" sx={{ backgroundColor: 'white', flexGrow: 1, p: 3, display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: '250px' }}>
                 {renderContent()}
             </Box>
         </Box>
