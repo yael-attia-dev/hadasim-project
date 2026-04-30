@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import {useEffect, useState} from 'react';
 import { Box, Typography, Button, Stack, Paper, Container } from '@mui/material';
 import Sidebar from './components/Sidebar.jsx'; // ניצור אותו מיד
 import AuthForm from './components/AuthForm.jsx'; // הקוד המקורי שלך יועבר לכאן
@@ -6,6 +6,7 @@ import AddStudent from "./components/AddStudent.jsx";
 import MapComponent from "./components/MapComponent.jsx";
 import StudentList from "./components/StudentList.jsx";
 import DistanceAlerts from "./components/DistanceAlerts.jsx";
+import axios from "axios";
 
 function App() {
 
@@ -15,6 +16,24 @@ function App() {
     const [authUpdate, setAuthUpdate] = useState(false);
     // פונקציה להצגת התוכן המרכזי לפי הבחירה
 
+    const fetchStudents = async (classroom) => {
+        if (!classroom) return;
+        try {
+            const response = await axios.get(`http://localhost:8080/api/students/by-class`, {
+                params: { classroom: classroom.trim() }
+            });
+            setStudents(response.data);
+        } catch (err) {
+            console.error("שגיאה בטעינת הרשימה", err);
+        }
+    };
+
+    useEffect(() => {
+        const savedClass = localStorage.getItem('teacherClass');
+        if (savedClass) {
+            fetchStudents(savedClass);
+        }
+    }, [page]);
 
     const onLoginSuccess = () => {
         setPage('home');
@@ -23,29 +42,35 @@ function App() {
 
     const renderContent = () => {
 
-        if (['student-list', 'distanceAlerts'].includes(page) && !isLoggedIn) {
+        const protectedPages = ['student-list', 'dist-alerts', 'map-component'];
+        if (protectedPages.includes(page) && !isLoggedIn) {
             return <AuthForm onLoginSuccess={onLoginSuccess}/>;
         }
+
 
         if (page === 'auth') {
             // במקום ללכת ישירות לבית, קוראים לפונקציה שמרעננת את המערכת
             return <AuthForm onLoginSuccess={onLoginSuccess}/>;
         }
 
+
         if (page === 'student-list') {
-            // שליפה מהזיכרון של הדפדפן
             const savedName = localStorage.getItem('teacherName');
             const savedClass = localStorage.getItem('teacherClass');
 
-            // שליחה לקומפוננטה של הרשימה
-            return <StudentList teacherName={savedName} classroom={savedClass} />;
+            // חסר כאן ה-students={students} כדי שהרשימה תדע מה להציג
+            return <StudentList
+                teacherName={savedName}
+                classroom={savedClass}
+                students={students}
+            />;
         }
+
+// שימי לב: ודאי שהשם כאן תואם למה שכתבת ב-Sidebar
         if (page === 'dist-alerts') {
-            // שליפה מהזיכרון של הדפדפן
             const savedName = localStorage.getItem('teacherName');
             const savedClass = localStorage.getItem('teacherClass');
 
-            // שליחה לקומפוננטה של הרשימה
             return <DistanceAlerts
                 teacherName={savedName}
                 classroom={savedClass}
@@ -62,6 +87,7 @@ function App() {
         if (page === 'add-student') {
             return <AddStudent />;
         }
+
 
         if (page === 'home') {
 

@@ -24,7 +24,18 @@ const Sidebar = ({ onNavigate }) => {
     return (
         <Box sx={{ width: 250, height: '100vh', bgcolor: '#3b8d39', color: 'white', position: 'fixed', right: 0, top: 0, pt: 4, display: 'flex', flexDirection: 'column' , borderRadius: '20px 20px 20px 20px'}}>
             <Box sx={{ textAlign: 'center', mb: 4 }}>
-                <AccountCircleIcon sx={{ fontSize: 60 }} />
+
+                <Box
+                    component="img"
+                    src="/logo2.png"
+                    alt="Logo"
+                    sx={{
+                        width: 80,
+                        height: 'auto',
+                        borderRadius: '50%',
+                        mb: 1
+                    }}
+                />
 
                 {/* כאן קורה השינוי של השם */}
                 <Typography variant="body1" sx={{ fontWeight: 'bold' }}>

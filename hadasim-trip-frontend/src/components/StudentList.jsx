@@ -1,35 +1,11 @@
-import { useEffect, useState } from 'react';
-import axios from 'axios';
 import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
-import AuthForm from "./AuthForm.jsx";
-
-const StudentList = ({ teacherName, classroom }) => {
-    const [students, setStudents] = useState([]);
-
-    useEffect(() => {
-
-        const fetchStudents = async () => {
-            if (!classroom) return; // הגנה: אל תשלח בקשה אם הכיתה עדיין ריקה
-
-            try {
-                // הדרך המקצועית לשלוח פרמטרים
-                const response = await axios.get(`http://localhost:8080/api/students/by-class`, {
-                    params: {
-                        classroom: classroom.trim()
-                    }
-                });
-                setStudents(response.data);
-            } catch (err) {
-                console.error("שגיאה בטעינת הרשימה", err);
-            }
-        };
-        fetchStudents();
-    }, [classroom]);
+import PropTypes from 'prop-types';
+const StudentList = ({ teacherName, classroom, students }) => {
 
 
     return (
         <Box sx={{ p: 4, direction: 'rtl' }}>
-            <Typography variant="h3" gutterBottom sx={{padding: '30px',  fontWeight: 'bold' ,backgroundColor:'#65d437', borderRadius: '20px 20px 20px 20px', color: 'white' , fontSize:'20' }}>
+            <Typography variant="h3" gutterBottom sx={{padding: '30px',  fontWeight: 'bold' , borderRadius: '20px 20px 20px 20px', color: '#65d437' , fontSize:'20' }}>
                 כיתה {classroom} של המורה {teacherName}
             </Typography>
 
@@ -67,4 +43,9 @@ const StudentList = ({ teacherName, classroom }) => {
     );
 };
 
+StudentList.propTypes = {
+    teacherName: PropTypes.string,
+    classroom: PropTypes.string,
+    students: PropTypes.array
+};
 export default StudentList;
